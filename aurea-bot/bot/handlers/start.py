@@ -2,7 +2,7 @@
 import logging
 
 from aiogram import F, Router
-from aiogram.filters import CommandStart
+from aiogram.filters import Command, CommandStart
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
@@ -28,6 +28,19 @@ async def cmd_start(message: Message, state: FSMContext) -> None:
     else:
         await message.answer(texts.GREETING)
         await message.answer(texts.CONSENT_TEXT, reply_markup=kb.consent_kb())
+
+
+@router.message(Command("id"))
+async def cmd_id(message: Message) -> None:
+    """Показывает пользователю его chat_id — для заполнения ADMIN_CHAT_ID.
+
+    Полезно при настройке: не раскрывает чужих данных, только собственный id.
+    """
+    await message.answer(
+        f"Ваш chat_id: <code>{message.from_user.id}</code>\n\n"
+        "Чтобы получать уведомления о новых записях, впишите это число "
+        "в <b>.env</b> как <code>ADMIN_CHAT_ID</code> и перезапустите бота."
+    )
 
 
 @router.callback_query(F.data == kb.CB_CONSENT)

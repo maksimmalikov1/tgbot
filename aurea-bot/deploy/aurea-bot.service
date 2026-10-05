@@ -1,0 +1,32 @@
+# systemd-юнит для круглосуточной работы бота на сервере (РФ-хостинг).
+# Установка:
+#   sudo cp deploy/aurea-bot.service /etc/systemd/system/aurea-bot.service
+#   (при необходимости поправьте User и пути ниже под свой сервер)
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now aurea-bot
+# Логи:   journalctl -u aurea-bot -f
+# Рестарт: sudo systemctl restart aurea-bot
+
+[Unit]
+Description=Aurea Telegram booking bot
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+# Пользователь, от которого работает бот (создайте непривилегированного):
+#   sudo useradd -r -m -d /opt/aurea-bot aurea
+User=aurea
+# Корень проекта (там лежат config.py и .env):
+WorkingDirectory=/opt/aurea-bot
+# Python из виртуального окружения проекта:
+ExecStart=/opt/aurea-bot/.venv/bin/python -m bot.main
+# .env подхватывается автоматически (python-dotenv из WorkingDirectory).
+Restart=always
+RestartSec=5
+# Небольшая защита:
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
