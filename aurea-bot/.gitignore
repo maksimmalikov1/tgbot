@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Виртуальное окружение
+.venv/
+venv/
+env/
+
+# Секреты и локальные данные
+.env
+
+# База данных SQLite (WAL создаёт -wal/-shm)
+bot.db
+bot.db-wal
+bot.db-shm
+
+# Логи
+*.log
