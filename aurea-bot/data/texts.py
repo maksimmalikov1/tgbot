@@ -42,9 +42,8 @@ def fmt_date_btn(value) -> str:
 # ======================= Статические тексты =======================
 
 GREETING = (
-    "Добро пожаловать в <b>Aurea</b> — студию эстетической косметологии "
-    "в центре Москвы. 🤍\n\n"
-    "Здесь можно записаться на приём к врачу-косметологу онлайн — за пару шагов."
+    "<b>Aurea</b> — студия эстетической косметологии в центре Москвы.\n\n"
+    "Онлайн-запись к врачу-косметологу за пару шагов."
 )
 
 CONSENT_TEXT = (
@@ -65,7 +64,7 @@ NEED_CONSENT = (
     "Нажмите /start и подтвердите согласие."
 )
 
-MENU_TITLE = "Чем можем помочь? Выберите раздел:"
+MENU_TITLE = "Выберите раздел:"
 
 FALLBACK = "Чтобы начать, нажмите /start 🙂"
 
@@ -137,7 +136,7 @@ def services_list() -> str:
         FIRST_VISIT_NOTE,
         PRICES_NOTE,
         "",
-        f"⚠️ {clinic.DISCLAIMER}",
+        "Нажмите на услугу, чтобы записаться 👇",
     ]
     return "\n".join(lines)
 
@@ -145,8 +144,7 @@ def services_list() -> str:
 DOCTOR = (
     "👩‍⚕️ <b>О враче</b>\n\n"
     f"<b>{clinic.DOCTOR_NAME}</b> — {clinic.DOCTOR_INFO}.\n\n"
-    f"Лицензия: {clinic.LICENSE}.\n\n"
-    f"⚠️ {clinic.DISCLAIMER}"
+    f"Лицензия: {clinic.LICENSE}."
 )
 
 CONTACTS = (
@@ -167,8 +165,7 @@ def booking_summary(service_name, date_value, time_str, name, phone) -> str:
         f"📅 Дата: <b>{fmt_date_long(date_value)}</b>\n"
         f"🕐 Время: <b>{time_str}</b>\n"
         f"👤 Имя: <b>{escape(name)}</b>\n"
-        f"📱 Телефон: <b>{escape(phone)}</b>\n\n"
-        f"⚠️ {clinic.DISCLAIMER}"
+        f"📱 Телефон: <b>{escape(phone)}</b>"
     )
 
 
@@ -179,8 +176,7 @@ def booking_success(service_name, date_value, time_str) -> str:
         f"📅 {fmt_date_long(date_value)} в {time_str}\n"
         f"📍 {clinic.ADDRESS}\n\n"
         f"{FIRST_VISIT_NOTE}\n\n"
-        "Если планы изменятся — отмените запись в разделе «Мои записи».\n\n"
-        f"⚠️ {clinic.DISCLAIMER}"
+        "Если планы изменятся — отмените запись в разделе «Мои записи»."
     )
 
 
@@ -203,8 +199,7 @@ def reminder(service_name, date_value, time_str, kind: str) -> str:
         "Ждём вас в Aurea:\n"
         f"💉 {escape(service_name)}\n"
         f"📅 {fmt_date_long(date_value)} в {time_str}\n"
-        f"📍 {clinic.ADDRESS}\n\n"
-        f"⚠️ {clinic.DISCLAIMER}"
+        f"📍 {clinic.ADDRESS}"
     )
 
 

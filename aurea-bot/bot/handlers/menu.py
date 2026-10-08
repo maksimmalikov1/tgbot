@@ -6,7 +6,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 
 from bot import keyboards as kb
-from data import texts
+from data import load_services, texts
 
 logger = logging.getLogger(__name__)
 router = Router()
@@ -21,7 +21,7 @@ async def to_menu(cb: CallbackQuery, state: FSMContext) -> None:
 
 @router.callback_query(F.data == kb.CB_SERVICES)
 async def show_services(cb: CallbackQuery) -> None:
-    await cb.message.answer(texts.services_list(), reply_markup=kb.back_menu_kb())
+    await cb.message.answer(texts.services_list(), reply_markup=kb.services_kb(load_services()))
     await cb.answer()
 
 

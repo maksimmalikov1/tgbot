@@ -55,14 +55,43 @@ async def start_booking(cb: CallbackQuery, state: FSMContext) -> None:
     await cb.answer()
 
 
-@router.callback_query(StateFilter(Booking.service), F.data.startswith(kb.PREFIX_SERVICE))
+@router.callback_query(F.data.startswith(kb.PREFIX_SERVICE))
 async def choose_service(cb: CallbackQuery, state: FSMContext) -> None:
+    """Выбор услуги. Работает в двух сценариях:
+
+    1) Внутри сценария записи (пользователь нажал «Записаться», выбирает услугу).
+    2) Напрямую из раздела «Услуги и цены» — тогда ещё нужно проверить
+       согласие и лимит активных записей, прежде чем вести к выбору даты.
+    """
     service_id = cb.data[len(kb.PREFIX_SERVICE):]
     service = get_service(service_id)
     if not service:
         await state.clear()
         await cb.answer(texts.STALE, show_alert=True)
         return
+
+    # Прямой заход из раздела услуг — не в состоянии Booking.service.
+    current_state = await state.get_state()
+    if current_state != Booking.service.state:
+        try:
+            agreed = await consent.has_consent(cb.from_user.id)
+        except Exception:  # noqa: BLE001
+            logger.exception("Ошибка проверки согласия")
+            agreed = False
+        if not agreed:
+            await cb.message.answer(texts.NEED_CONSENT)
+            await cb.answer()
+            return
+
+        try:
+            active = await bookings.count_active(cb.from_user.id)
+        except Exception:  # noqa: BLE001
+            logger.exception("Ошибка подсчёта активных записей")
+            active = 0
+        if active >= schedule.MAX_ACTIVE_BOOKINGS:
+            await cb.message.answer(texts.LIMIT_REACHED, reply_markup=kb.back_menu_kb())
+            await cb.answer()
+            return
 
     await state.update_data(service_id=service_id, service_name=service["name"])
     await state.set_state(Booking.date)
